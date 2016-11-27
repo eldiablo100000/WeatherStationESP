@@ -9,8 +9,8 @@
 #include <EEPROMforAuth.h>
 #define NFIELDS 4 //Fields in the form of the standalone WebService
 #define NMINSLEEP 20
-//#define TIMESLEEP 1000000 * 5 // in useconds
-#define TIMESLEEP 1000000 * 60 * NMINSLEEP
+#define TIMESLEEP 1000000 * 5 // in useconds
+//#define TIMESLEEP 1000000 * 60 * NMINSLEEP
 #define SERVER "http://184.106.153.149/update"
   ADC_MODE(ADC_VCC);
 //DHT22
@@ -409,7 +409,7 @@ int postToServer(String api_key,float f1, float f2, float f3,float f4) {
 //                                                                                    
 
 //CSS DECLARATION
-  char css[780]="body {\
+  char css[540]="body {\
     background-color: LightGreen;\
   }\
   h1 {\
@@ -418,24 +418,24 @@ int postToServer(String api_key,float f1, float f2, float f3,float f4) {
    h2 {\
     color: ForestGreen;\
   }\
-  ul {\
+  ul.bar {\
     list-style-type: none;\
     margin: 0;\
     padding: 0;\
     overflow: hidden;\
     background-color: #333;\
   }\
-  li {\
+  li.bar {\
     float: left;\
   }\
-  li a {\
+  li.bar a {\
     display: block;\
     color: white;\
     text-align: center;\
     padding: 14px 16px;\
     text-decoration: none;\
   }\
-  li a:hover:not(.active) {\
+  li.bar a:hover:not(.active) {\
     background-color: #111;\
   }\
   .active {\
@@ -476,12 +476,12 @@ void handlePost() {
     </style>\
    </head>\
    <body>\
-   <ul>\
-  <li><a class=\"active\" href=\"/\">Home</a></li>\
-  <li><a href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a href=\"/Tools\">Tools</a></li>\
+   <ul class=\"bar\">\
+  <li class=\"bar\"><a class=\"active\" href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a href=\"/Tools\">Tools</a></li>\
   </ul>\
    <h1>Crowdsending Data</h1>\
   <h2>Registrationg Confirmed</h2>\
@@ -499,27 +499,29 @@ void handlePost() {
   delay(1000);
   digitalWrite(ledPinYellow,LOW);
   eep.writeToEEPROM(network, server.arg(3).c_str(), server.arg(4).c_str());
+strcpy(temp,"");
 }
 void handleReset() {
   blinkLed(ledPinRed,3);
-  int lenHTML = 2000;
-  char temp[lenHTML];
-  snprintf(temp, lenHTML,"<html><head>\
-  <style>%s</style>\
+  String temp;
+  temp="<html><head>\
+  <style>";
+  temp+=css;
+  temp+="</style>\
    </head>\
    <body>\
-  <ul>\
-  <li><a href=\"/\">Home</a></li>\
-  <li><a href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a class=\"active\" href=\"/Tools\">Tools</a></li>\
+  <ul class=\"bar\">\
+  <li class=\"bar\"><a href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a class=\"active\" href=\"/Tools\">Tools</a></li>\
   </ul>\
    <h1>Crowdsending Data</h1>\
   <h2>Resetting</h2>\
   <p>Your Weather Station was cleared from every old data.\
   <br/>Click Home to register from zero.</p>\
-  </body></html>",css);
+  </body></html>";
 
   Serial.println("----->Reset");
   server.send(200, "text/html", temp);
@@ -527,24 +529,25 @@ void handleReset() {
 }
 void handleExit() {
   blinkLed(ledPinRed,3);
-  int lenHTML = 2000;
-  char temp[lenHTML];
-  snprintf(temp, lenHTML,"<html><head>\
-  <style>%s</style>\
+  String temp;
+  temp="<html><head>\
+  <style>";
+  temp+=css;
+  temp+="</style>\
    </head>\
    <body>\
-  <ul>\
-  <li><a href=\"/\">Home</a></li>\
-  <li><a href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a class=\"active\" href=\"/Tools\">Tools</a></li>\
+  <ul class=\"bar\">\
+  <li class=\"bar\"><a href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a class=\"active\" href=\"/Tools\">Tools</a></li>\
   </ul>\
    <h1>Crowdsending Data</h1>\
   <h2>Stopping server</h2>\
   <p>Your AccessPoint was closed: <br/> you can start crowdsensing\
   (if you registred your Weather Station) <br/> you must reset the Weather Station otherwise.</p>\
-  </body></html>",css);
+  </body></html>";
   Serial.println("----->Exit");
   server.send(200, "text/html", temp);
   WiFi.disconnect();
@@ -569,44 +572,72 @@ void handleNotFound() {
 }
 void handleIoT() {
   digitalWrite(ledPinYellow, HIGH);
-  int lenHTML = 2000;
-  char temp[lenHTML];
-  snprintf(temp, lenHTML,"<html>\
+  int lenHTML = 2900;
+  String temp;
+  temp="<html>\
   <head>\
-  <style>%s</style>\
+  <style>";
+  temp+=css;
+  temp+="</style>\
    </head>\
    <body>  \
-   <ul>\
-  <li><a href=\"/\">Home</a></li>\
-  <li><a class=\"active\" href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a href=\"/Tools\">Tools</a></li>\
+   <ul class=\"bar\">\
+  <li class=\"bar\"><a href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a class=\"active\" href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a href=\"/Tools\">Tools</a></li>\
   </ul>\
   <h1>Crowdsending Data</h1>\
-  <h2>What is IoT?</h2>\
+  <h2>IoT?</h2>\
   <h3>Wikipedia:</h3>\
   <p>The Internet of things (stylised Internet of Things or IoT) is the \
   internetworking of physical devices, vehicles (also referred to as \"connected devices\" and \"smart devices\"),\
-   buildings and other items—embedded with electronics, software, sensors, actuators, and network \
+   buildings and other items-embedded with electronics, software, sensors, actuators, and network \
    connectivity that enable these objects to collect and exchange data. <br/>In 2013 the Global Standards \
    Initiative on Internet of Things (IoT-GSI) defined the IoT as \"the infrastructure of the information society.\"\
    The IoT allows objects to be sensed  and/or controlled remotely across existing network infrastructure,\
-   creating opportunities for more direct integration of the physical world into computer-based systems, \
+   creating opportunities for more direct integration of the physical world into computer\-based systems, \
    and resulting in improved efficiency, accuracy and economic benefit.</p>\
-  </body> \
-  </html> ",css);
-  server.send(200, "text/html", temp);
+  <h2>What is IoT?</h2>\
+     <p>\
+  Today the IoT is heavily present in:\
+  <ul>\
+   <li>Home Automation</li>\
+   <li>Industry</li>\
+   <li>Telematics</li>\
+   <li>WSN (Wireless Sensor Network)</li>\
+   <li>Security / Surveillance</li>\
+   <li>Robotics</li>\
+   <li>Environmental monitoring</li>\
+  </ul>\
+  <br/>While the sectors in which the IoT world is channeling its attention are:\
+  <ul>\
+   <li>Biomedical engineering</li>\
+   <li>Safety (intrinsic) device adapted to the IoT world</li>\
+   <li>Scientific research</li>\
+  </ul>\
+  <br/>Just starting from the idea of ​​IoT, through a business model like crowdsourcing will dock right\
+   in one of the areas where the IoT is focusing: collaborative IoT, a system to collect measurements\
+    from devices heterogeneous  in a single location, to manage and provide methods to multiple\
+     users to write and read what can be considered interesting: in short, the collaborative IoT is\
+      the new frontier of sharing information .</p>\
+    </body> \
+  </html>";
+
+  server.send(200, "text/html",temp);
   delay(5000);
   digitalWrite(ledPinYellow, LOW);
+  //free(temp);
 }
 void handleTools() {
   digitalWrite(ledPinYellow, HIGH);
-  int lenHTML = 2500;
-  char temp[lenHTML];
-  snprintf(temp, lenHTML,"<html>\
+  String temp;
+  temp="<html>\
   <head>\
-  <style>%s\
+  <style>";
+  temp+=css;
+  temp+="\
   .btn {\
     background: #75f734;\
     background-image: -webkit-linear-gradient(top, #75f734, #3d8c23);\
@@ -635,12 +666,12 @@ void handleTools() {
   </style>\
    </head>\
    <body>  \
-   <ul>\
-  <li><a href=\"/\">Home</a></li>\
-  <li><a href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a class=\"active\" href=\"/Tools\">Tools</a></li>\
+   <ul class=\"bar\">\
+  <li class=\"bar\"><a href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a class=\"active\" href=\"/Tools\">Tools</a></li>\
   </ul>\
   <h1>Crowdsending Data</h1>\
   <h2>Explore your Weather Station: </h2>\
@@ -651,26 +682,27 @@ void handleTools() {
   <button class=\"btn\"  type=\"submit\" >Close server!</button>\
   </form>\
   </body> \
-  </html> ",css);
+  </html> ";
   server.send(200, "text/html", temp);
   delay(5000);
   digitalWrite(ledPinYellow, LOW);
 }
 void handleAbout() {
   digitalWrite(ledPinYellow, HIGH);
-  int lenHTML = 2000;
-  char temp[lenHTML];
-  snprintf(temp, lenHTML,"<html>\
+  String temp;
+  temp="<html>\
   <head>\
-  <style>%s</style>\
+  <style>";
+  temp+=css;
+  temp+="</style>\
    </head>\
    <body>  \
-   <ul>\
-  <li><a href=\"/\">Home</a></li>\
-  <li><a  href=\"/IoT\" >IoT</a></li>\
-  <li><a class=\"active\" href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a href=\"/Tools\">Tools</a></li>\
+   <ul class=\"bar\">\
+  <li class=\"bar\"><a href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a  href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a class=\"active\" href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a href=\"/Tools\">Tools</a></li>\
   </ul>\
   <h1>Crowdsending Data</h1>\
   <h2>About the Work</h2>\
@@ -679,34 +711,60 @@ void handleAbout() {
   and then be integrated in the release phase, in a standalone box (battery powered \
   with lithium batteries and sotware designed to make everything low-power) with \
   two sensors: BMP280, pressure and temperature, and DHT22, humidity and temperature.\
-  <br/>The monitorazioni are saved on the server ... UniBo.</p>\
+  <br/></p>\
+  <h2>About Crowdsensing</h2>\
+  <p>Born as an offshoot of crowdsourcing, the crowdsensing is a business model was born in the last few \
+  years, in which several devices are exploited, as well as the purposes for which they were designed \
+  (call, connect to the Internet, manage multimedia files), and also to communicate share measurements ​​\
+  detected by sensors on a few data collection platform.<br/>\
+  In analogy, ideas, suggestions, opinions that, in the process of outsourcing were the subject of the \
+  exchange in a crowdsourcing model in crowdsensensing are replaced with sensor measurements ​​and / or information related to environmental measurements or processes.\
+  We distinguish two types of crowdsensing, according to the effort that the user takes to activate \
+  the data communication procedure:\
+  <ul>\
+  <li>participatory crowdsensing in which the user must enable the detection of a sensor, or its initialization, implies the maximum effort among the possible cases;\
+  Eg. SenSquare, a service that collects measurements ​​from sensors (Environmental Crowdsensing) sent by minimal \
+  weather stations of users and provides an interface to the possible stakeholders to access these surveys.</li>\
+   <li>opportunistic Crowdsensing, in which the user automatically sends the measurements, probably because they\
+    are initialized sensors without user input (but not a power), minimum effort.\
+  Eg. Google or Facebook or telephone operators, and in general the devices that lend themselves to the \
+  Mobile Crowdsensing, holding, ie, traces of sensors such as light, noise (noise), location (GPS) and \
+  movement (accelerometer) automatically without a explicit user action if you do not install the \
+  application (and the granting of the necessary permits, as in the case of Google apps) and / or to \
+  subscribe to the service (as for the operators, who can read the measurements ​​related to quality our data \
+  line or to our mobile location).</li></ul></p>\
   </body> \
-  </html> ",css);
+  </html>";
   server.send(200, "text/html", temp);
   delay(5000);
   digitalWrite(ledPinYellow, LOW);
 }
 void handleContact() {
   digitalWrite(ledPinYellow, HIGH);
-  int lenHTML = 2000;
-  char temp[lenHTML];
-  snprintf(temp, lenHTML,"<html>\
+ String temp;
+ temp="<html>\
   <head>\
-  <style>%s</style>\
+  <style>";
+  temp+=css;
+  temp+="</style>\
    </head>\
    <body>  \
-   <ul>\
-  <li><a href=\"/\">Home</a></li>\
-  <li><a href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a class=\"active\" href=\"/Contact\">Contact</a></li>\
-  <li><a href=\"/Tools\">Tools</a></li>\
+   <ul class=\"bar\">\
+  <li class=\"bar\"><a href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a class=\"active\" href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a href=\"/Tools\">Tools</a></li>\
   </ul>\
   <h1>Crowdsending Data</h1>\
   <h2>Contact</h2>\
-  <p>Men at work...</p>\
+  <p>This project was designed and implemented by Natale Vadala', under the supervision of Prof. Luciano Bononi and Dr. Luca Bedogni at the University of Bologna.</p>\
+    <p>Email: nato.vada@gmail.com</p>\
+  <p>Institutional Email: natale.vadala@studio.unibo.it</p>\
+  <p>Channel GitHub <a href=\"https://github.com/eldiablo100000\"> github.com/eldiablo100000</a></p>\
+  <p>Link to Weather Station's Sketch <a href=\"https://github.com/eldiablo100000/WeatherStationESP\"> github.com/eldiablo100000/WeatherStationESP</a> </p>\
   </body> \
-  </html> ",css);
+  </html> ";
   server.send(200, "text/html", temp);
   delay(5000);
 
@@ -715,32 +773,42 @@ void handleContact() {
 void handleRoot() {
   int lenHTML = 2000;
   //blinkLed(ledPinYellow,2);
+  String temp;
 
-  char temp[lenHTML];
   int sec = millis() / 1000;
   int min = sec / 60;
   int hr = min / 60;
-  snprintf(temp, lenHTML,"<html>\
+  temp="<html>\
   <head>\
-  <style>%s</style>\
+  <style>";
+  temp+=css;
+  temp+="</style>\
    </head>\
    <body>  \
-   <ul>\
-  <li><a class=\"active\" href=\"/\">Home</a></li>\
-  <li><a href=\"/IoT\" >IoT</a></li>\
-  <li><a href=\"/About\">About</a></li>\
-  <li><a href=\"/Contact\">Contact</a></li>\
-  <li><a href=\"/Tools\">Tools</a></li>\
+   <ul class=\"bar\">\
+  <li class=\"bar\"><a class=\"active\" href=\"/\">Home</a></li>\
+  <li class=\"bar\"><a href=\"/IoT\" >IoT</a></li>\
+  <li class=\"bar\"><a href=\"/About\">About</a></li>\
+  <li class=\"bar\"><a href=\"/Contact\">Contact</a></li>\
+  <li class=\"bar\"><a href=\"/Tools\">Tools</a></li>\
   </ul>\
   <h1>Crowdsending Data</h1>\
   <h2>Weather Station based on Arduino</h2>\
   <h2>Hello from ESP8266!</h2>\
-  <p>Uptime: %02d:%02d:%02d</p>\
+  <p>Uptime: ";
+  temp+=hr;
+  temp+=":";
+  temp+=min%60;
+  temp+=":";
+  temp+=sec%60;
+    temp+="</p>\
   <fieldset>\
   <legend>Sign in:</legend>\
   <form action=/RegisterWStation method=POST>\
     <p><label>Name: <input type=\"text\" name=\"fullname\" placeholder=\"Alan Turing\"></label></p>\
-    <p><label>ESSID: %s</label></p>\
+    <p><label>ESSID: ";
+    temp+=networks;
+    temp+="</label></p>\
     <p><label> or hidden ESSID: <input type=\"text\" name=\"essid\" placeholder=\"Fastweb-9876527\"></label></p>\
     <p><label>Password: <input type=\"password\" name=\"password\"></label></p>\
     <p><label>Write Key: <input type=\"text\" name=\"key\" placeholder=\"lachiave\"></label></p>\
@@ -748,8 +816,7 @@ void handleRoot() {
   </form>\
   </fieldset>  \
   </body> \
-  </html> ",css,
-  hr, min % 60, sec % 60,networks);
+  </html> ";
   server.send(200, "text/html", temp);
   delay(5000);
   blink2Led(ledPinYellow,ledPinRed, 3);
